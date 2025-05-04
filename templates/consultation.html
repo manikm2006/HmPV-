@@ -1,0 +1,481 @@
+{% extends "base.html" %}
+
+{% block title %}Consultation - Medivision{% endblock %}
+
+{% block content %}
+<div class="consultation-container">
+    <div class="consultation-header">
+        <h1>Schedule a Consultation</h1>
+        <p class="subtitle">Connect with medical specialists for professional interpretation of your results</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="consultation-card">
+                <div class="card-header">
+                    <h3>Consultation Form</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('consultation') }}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Preferred Date</label>
+                            <input type="date" class="form-control" id="date" name="date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="time" class="form-label">Preferred Time</label>
+                            <select class="form-select" id="time" name="time" required>
+                                <option value="" selected disabled>Select a time</option>
+                                <option value="09:00">9:00 AM</option>
+                                <option value="10:00">10:00 AM</option>
+                                <option value="11:00">11:00 AM</option>
+                                <option value="13:00">1:00 PM</option>
+                                <option value="14:00">2:00 PM</option>
+                                <option value="15:00">3:00 PM</option>
+                                <option value="16:00">4:00 PM</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="specialist" class="form-label">Specialist Type</label>
+                            <select class="form-select" id="specialist" name="specialist" required>
+                                <option value="" selected disabled>Select a specialist</option>
+                                <option value="radiologist">Radiologist</option>
+                                <option value="dermatologist">Dermatologist</option>
+                                <option value="ophthalmologist">Ophthalmologist</option>
+                                <option value="general">General Practitioner</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Additional Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 2L11 13"></path>
+                                    <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+                                </svg>
+                                Schedule Consultation
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    
+    <div class="analysis-summary">
+        <div class="analysis-card">
+            <h2>Your Analysis Results</h2>
+            <div class="analysis-details">
+                <div class="analysis-item">
+                    <span class="analysis-label">Prediction:</span>
+                    <span class="analysis-value {% if prediction == 'HMPV' or prediction == 'COVID-19' or prediction == 'Viral Pneumonia' %}positive{% else %}negative{% endif %}">
+                        {{ prediction }}
+                    </span>
+                </div>
+                <div class="analysis-item">
+                    <span class="analysis-label">Confidence:</span>
+                    <span class="analysis-value">{{ confidence }}%</span>
+                </div>
+            </div>
+            <div class="analysis-actions">
+                <a href="{{ url_for('generate_report') }}" class="btn btn-outline">
+                    <img src="{{ url_for('static', filename='images/download.svg') }}" alt="Download" class="btn-icon">
+                    Download Report
+                </a>
+            </div>
+        </div>
+        
+        {% if recommended_doctors %}
+        <div class="recommended-doctors">
+            <h3>Recommended Specialists</h3>
+            <div class="doctor-list">
+                {% for doctor in recommended_doctors %}
+                <div class="doctor-card">
+                    <div class="doctor-avatar">
+                        <img src="{{ url_for('static', filename='images/' + doctor.avatar) }}" alt="{{ doctor.name }}">
+                        <span class="status-indicator {% if doctor.online %}online{% else %}offline{% endif %}"></span>
+                    </div>
+                    <div class="doctor-info">
+                        <h4>{{ doctor.name }}</h4>
+                        <p class="specialty">{{ doctor.specialty }}</p>
+                        <p class="status">{% if doctor.online %}Online{% else %}Offline{% endif %}</p>
+                    </div>
+                    <div class="doctor-actions">
+                        <button class="btn btn-sm btn-primary">Schedule</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="doctors-section">
+        <h2>Available Specialists</h2>
+        <p class="section-description">Our team of medical professionals is ready to help you understand your results and provide expert advice.</p>
+        
+        <div class="doctors-grid">
+            {% for doctor in doctors %}
+            <div class="doctor-card">
+                <div class="doctor-avatar">
+                    <img src="{{ url_for('static', filename='images/doctor' ~ doctor.id ~ '.svg') }}" alt="{{ doctor.name }}">
+                    <div class="status-indicator {% if doctor.online %}online{% else %}offline{% endif %}"></div>
+                </div>
+                <div class="doctor-info">
+                    <h3>{{ doctor.name }}</h3>
+                    <p class="doctor-specialty">{{ doctor.specialty }}</p>
+                    <div class="doctor-status">
+                        <span class="status-dot {% if doctor.online %}online{% else %}offline{% endif %}"></span>
+                        <span class="status-text">{% if doctor.online %}Online{% else %}Offline{% endif %}</span>
+                    </div>
+                </div>
+                <div class="doctor-actions">
+                    <button class="btn btn-primary">Schedule Consultation</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="recommendations-section">
+        <h2>Recommendations</h2>
+        <div class="recommendations-card">
+            <ul class="recommendations-list">
+                <li>
+                    <div class="recommendation-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                    </div>
+                    <div class="recommendation-content">
+                        <h3>Schedule a Consultation</h3>
+                        <p>Book an appointment with one of our specialists to discuss your results in detail.</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="recommendation-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="recommendation-content">
+                        <h3>Download Your Report</h3>
+                        <p>Save a detailed report of your analysis results for your records or to share with your healthcare provider.</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="recommendation-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                    </div>
+                    <div class="recommendation-content">
+                        <h3>Follow Up</h3>
+                        <p>Schedule regular check-ups to monitor your condition and track any changes over time.</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .consultation-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    
+    .consultation-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .page-title {
+        font-size: 2.5rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    
+    .page-subtitle {
+        font-size: 1.2rem;
+        color: #6c757d;
+    }
+    
+    .analysis-summary {
+        margin-bottom: 3rem;
+    }
+    
+    .analysis-card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+    }
+    
+    .analysis-card h2 {
+        color: #333;
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+    }
+    
+    .analysis-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .analysis-item {
+        flex: 1;
+        min-width: 200px;
+    }
+    
+    .analysis-label {
+        display: block;
+        font-weight: 500;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+    }
+    
+    .analysis-value {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .analysis-value.positive {
+        color: #dc3545;
+    }
+    
+    .analysis-value.negative {
+        color: #28a745;
+    }
+    
+    .analysis-actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+    
+    .btn-outline {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        background-color: transparent;
+        border: 1px solid #007bff;
+        color: #007bff;
+        border-radius: 4px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+    
+    .btn-icon {
+        width: 16px;
+        height: 16px;
+        margin-right: 0.5rem;
+    }
+    
+    .doctors-section {
+        margin-bottom: 3rem;
+    }
+    
+    .doctors-section h2 {
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-size: 1.8rem;
+    }
+    
+    .section-description {
+        color: #6c757d;
+        margin-bottom: 2rem;
+    }
+    
+    .doctors-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .doctor-card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+    
+    .doctor-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .doctor-avatar {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+    
+    .doctor-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .status-indicator {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+    }
+    
+    .status-indicator.online {
+        background-color: #28a745;
+    }
+    
+    .status-indicator.offline {
+        background-color: #6c757d;
+    }
+    
+    .doctor-info {
+        padding: 1.5rem;
+    }
+    
+    .doctor-info h3 {
+        color: #333;
+        margin-bottom: 0.25rem;
+        font-size: 1.25rem;
+    }
+    
+    .doctor-specialty {
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+    }
+    
+    .doctor-status {
+        display: flex;
+        align-items: center;
+    }
+    
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+    }
+    
+    .status-dot.online {
+        background-color: #28a745;
+    }
+    
+    .status-dot.offline {
+        background-color: #6c757d;
+    }
+    
+    .status-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+    
+    .doctor-actions {
+        padding: 0 1.5rem 1.5rem;
+    }
+    
+    .recommendations-section {
+        margin-bottom: 2rem;
+    }
+    
+    .recommendations-section h2 {
+        color: #333;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+    }
+    
+    .recommendations-card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+    }
+    
+    .recommendations-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .recommendations-list li {
+        display: flex;
+        margin-bottom: 1.5rem;
+    }
+    
+    .recommendations-list li:last-child {
+        margin-bottom: 0;
+    }
+    
+    .recommendation-icon {
+        flex: 0 0 40px;
+        height: 40px;
+        background-color: #f8f9fa;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        color: #007bff;
+    }
+    
+    .recommendation-content {
+        flex: 1;
+    }
+    
+    .recommendation-content h3 {
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+    }
+    
+    .recommendation-content p {
+        color: #6c757d;
+        margin: 0;
+    }
+    
+    @media (max-width: 768px) {
+        .doctors-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .analysis-details {
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }
+</style>
+{% endblock %} 

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <!-- Background -->
+  <rect width="200" height="200" fill="#f8f9fa"/>
+  
+  <!-- Head -->
+  <circle cx="100" cy="70" r="40" fill="#e0e0e0"/>
+  
+  <!-- Body -->
+  <path d="M60,110 L140,110 L150,200 L50,200 Z" fill="#28a745"/>
+  
+  <!-- Lab Coat -->
+  <path d="M65,115 L135,115 L145,195 L55,195 Z" fill="#fff"/>
+  
+  <!-- Face -->
+  <circle cx="85" cy="60" r="5" fill="#333"/>
+  <circle cx="115" cy="60" r="5" fill="#333"/>
+  <path d="M85,80 Q100,90 115,80" stroke="#333" stroke-width="3" fill="none"/>
+  
+  <!-- Glasses -->
+  <path d="M75,60 L125,60" stroke="#333" stroke-width="2" fill="none"/>
+  <circle cx="85" cy="60" r="10" stroke="#333" stroke-width="2" fill="none"/>
+  <circle cx="115" cy="60" r="10" stroke="#333" stroke-width="2" fill="none"/>
+  
+  <!-- Microscope Icon -->
+  <path d="M90,130 L110,130 L105,150 L95,150 Z" fill="#28a745"/>
+  <circle cx="100" cy="140" r="5" fill="#333"/>
+</svg> 

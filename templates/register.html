@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Medivision{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white text-center py-3">
+                <div class="logo-container mb-3">
+                    <div class="logo-icon"></div>
+                    <div class="logo-text">
+                        <span>Medi</span><span>vision</span>
+                    </div>
+                </div>
+                <h2><i class="fas fa-user-plus me-2"></i>Register</h2>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('register') }}">
+                    <div class="mb-3">
+                        <label for="name" class="form-label"><i class="fas fa-user me-2"></i>Full Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label"><i class="fas fa-envelope me-2"></i>Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label"><i class="fas fa-lock me-2"></i>Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Register
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .logo-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+    
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        position: relative;
+    }
+    
+    .logo-icon::before,
+    .logo-icon::after {
+        content: '';
+        position: absolute;
+        background: #007bff;
+    }
+    
+    .logo-icon::before {
+        width: 20px;
+        height: 2px;
+        transform: rotate(45deg);
+    }
+    
+    .logo-icon::after {
+        width: 2px;
+        height: 20px;
+        transform: rotate(45deg);
+    }
+    
+    .logo-text {
+        display: flex;
+        align-items: baseline;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    
+    .logo-text span:first-child {
+        color: white;
+    }
+    
+    .logo-text span:last-child {
+        color: rgba(255, 255, 255, 0.8);
+        margin-left: 2px;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm_password');
+    
+    form.addEventListener('submit', function(e) {
+        if (password.value !== confirmPassword.value) {
+            e.preventDefault();
+            alert('Passwords do not match!');
+        }
+    });
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}History - MediVision{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <h2 class="mb-4">Analysis History</h2>
+        
+        <!-- Filters -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="form-label">Date Range</label>
+                        <select class="form-select">
+                            <option>Last 7 days</option>
+                            <option>Last 30 days</option>
+                            <option>Last 3 months</option>
+                            <option>Custom range</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Result</label>
+                        <select class="form-select">
+                            <option>All Results</option>
+                            <option>HMPV Positive</option>
+                            <option>HMPV Negative</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Sort By</label>
+                        <select class="form-select">
+                            <option>Most Recent</option>
+                            <option>Oldest First</option>
+                            <option>Confidence (High to Low)</option>
+                            <option>Confidence (Low to High)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button class="btn btn-primary w-100">Apply Filters</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- History Items -->
+        <div class="history-items">
+            {% for item in history %}
+            <div class="history-item">
+                <div class="row align-items-center">
+                    <div class="col-md-2">
+                        <img src="{{ item.image_path }}" class="img-fluid rounded" alt="Analysis Image">
+                    </div>
+                    <div class="col-md-7">
+                        <h5 class="mb-2">{{ item.prediction }}</h5>
+                        <p class="text-muted mb-1">Confidence: {{ "%.2f"|format(item.confidence * 100) }}%</p>
+                        <p class="text-muted mb-0">Date: {{ item.date }}</p>
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <button class="btn btn-outline-primary mb-2 w-100">View Details</button>
+                        <button class="btn btn-outline-secondary w-100">Share Result</button>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <img src="{{ url_for('static', filename='images/empty-history.svg') }}" alt="No History" style="width: 200px; opacity: 0.5;">
+                <h3 class="mt-4">No Analysis History</h3>
+                <p class="text-muted">Start by analyzing your first image</p>
+                <a href="{{ url_for('analyze') }}" class="btn btn-primary mt-2">Start Analysis</a>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if history %}
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">Previous</a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                </li>
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add any additional JavaScript for the history page here
+    document.addEventListener('DOMContentLoaded', function() {
+        // Example: Add click handlers for filter buttons
+        document.querySelector('.btn-primary').addEventListener('click', function() {
+            // Handle filter application
+            console.log('Applying filters...');
+        });
+    });
+</script>
+{% endblock %} 

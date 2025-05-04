@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="50" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .text { font-family: Arial, sans-serif; font-weight: bold; }
+        .ip { fill: #2563eb; }
+        .guard { fill: #1e40af; }
+    </style>
+    <text x="10" y="35" class="text ip" font-size="24">IP</text>
+    <text x="50" y="35" class="text guard" font-size="24">Guard</text>
+</svg> 
